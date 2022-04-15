@@ -37,12 +37,10 @@ namespace WindowsFormsAppBasic
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
 
         public void L1_Click(object sender, EventArgs e)
         {
-            
             // Excel起動
             elxApp = new Excel.Application();
             // Excelのウィンドウを表示・非表示
@@ -67,26 +65,140 @@ namespace WindowsFormsAppBasic
 
             // シート選択
             ws = wb.Worksheets[2];
-
+            // シート名の取得
+            MessageBox.Show(elxApp.ActiveSheet.Name + " 【シート名を取得】");
             // セルの値を取得
-            rng = ws.Cells[1, 1];
-            MessageBox.Show(rng.Value);
-
-            // Formを終了する
-            //Application.Exit();
-        }
-
-        private void R1_Click(object sender, EventArgs e)
-        {
-            // Excel保存
-            //wb.SaveAs(@"C:\testFolder\testCs");
-        }
-        private void Form1_Clik(object sender, EventArgs e)
-        {
+            try
+            {
+                rng = ws.Cells[1, 1];
+                MessageBox.Show(rng.Value + "　【セルの値】");
+            }
+            catch(ArgumentNullException ex)
+            {
+                MessageBox.Show(ex.Message + "　【セルの値の取得失敗】");
+            }
             
         }
-        
+        private void L2_Click(object sender, EventArgs e)
+        {
+            // Excel保存
+            wb.Save();
+            // 別名で保存
+            //this.book.SaveCopyAs(newFileName);
+            this.wb.Close(false);
+            // エクセルを閉じる
+            this.elxApp.Quit();
+        }
 
-        
+        private void L3_Click(object sender, EventArgs e)
+        {
+            // Formを閉じる
+            //Application.Exit();
+            this.Close();
+        }
+
+        private void L4_Click(object sender, EventArgs e)
+        {
+            // 検索
+            var keyword = textBox1.Text;
+            var hitRange = ws.Cells.Find(What: keyword, LookIn: -4163, LookAt: 1);
+            if (hitRange != null)
+            {
+                hitRange.Select();
+            }
+            // 置換
+            var sampleReplace = keyword.Replace(keyword, keyword + "01");
+            textBox1.Text = sampleReplace;
+            hitRange.Value = sampleReplace;
+
+        }
+
+        private void setting_Load(object sender, EventArgs e)
+        {
+            // コンボボックスの表示リストの設定
+            DataTable dt = new DataTable();
+            dt.Columns.Add("id");
+            dt.Columns.Add("name");
+
+            DataRow dr = dt.NewRow();
+            dr["id"] = "";
+            dr["name"] = "";
+            dt.Rows.Add(dr); 
+
+            dr = dt.NewRow();
+            dr["id"] = "01";
+            dr["name"] = "Leaning";
+            dt.Rows.Add(dr);
+
+            dr = dt.NewRow();
+            dr["id"] = "02";
+            dr["name"] = "Edit";
+            dt.Rows.Add(dr);
+
+            dr = dt.NewRow();
+            dr["id"] = "03";
+            dr["name"] = "Test";
+            dt.Rows.Add(dr);
+
+            dr = dt.NewRow();
+            dr["id"] = "04";
+            dr["name"] = "Setting";
+            dt.Rows.Add(dr);
+
+            ;this.comboBox1.DataSource = dt;
+            this.comboBox1.DisplayMember = "Name";
+            this.comboBox1.ValueMember = "id";
+
+        }
+        private void comboBox1_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            int index = this.comboBox1.SelectedIndex;
+            string value = this.comboBox1.SelectedValue.ToString();
+            MessageBox.Show(value);
+            return;
+        }
+        private void setting_Closing(object sender, EventArgs e)
+        {
+            textBox1.Text = "";
+
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tabPage1_Click(object sender, EventArgs e)
+        {
+
+        }
+        //マウスのクリック位置を記憶
+        private Point mousePoint;
+
+        //Form1のMouseDownイベントハンドラ
+        //マウスのボタンが押されたとき
+        private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            {
+                //位置を記憶する
+                mousePoint = new Point(e.X, e.Y);
+            }
+        }
+
+        //Form1のMouseMoveイベントハンドラ
+        //マウスが動いたとき
+        private void Form1_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+            {
+                this.Left += e.X - mousePoint.X;
+                this.Top += e.Y - mousePoint.Y;
+                //または、つぎのようにする
+                //this.Location = new Point(
+                //    this.Location.X + e.X - mousePoint.X,
+                //    this.Location.Y + e.Y - mousePoint.Y);
+            }
+        }
     }
 }
