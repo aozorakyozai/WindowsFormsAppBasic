@@ -14,7 +14,8 @@ namespace setting
 {
     public partial class setting : System.Windows.Forms.Form
     {
-        
+        public DateTime today = DateTime.Today;
+        public DateTime now = DateTime.Now;
 
         /**************** コンストラクタ ****************/
         public setting()
@@ -97,14 +98,21 @@ namespace setting
         // 文字列の加工
         private void L4_Click(object sender, EventArgs e)
         {
+
             try
             {
                 var workbook = new XLWorkbook(@"C:\Users\iwanami\MyDrive\myNote.xlsx");
-                var worksheet = workbook.Worksheets.Add("Tab test01");
-                worksheet.Range(1, 1, 10, 1).Value = "あ";
+                //var worksheet = workbook.Worksheets.Add("Tab test01");
+                var worksheet2 = workbook.Worksheet("Tab test01");
+                // シート名を指定　上記と同じ
+                var worksheet1 = workbook.Worksheet(1);
+                worksheet1.Cell(1, 7).Value = now;
+                worksheet2.Range(1, 1, 10, 1).Value = "あ";
                 // 上記と同じ入力方法
-                worksheet.Range(1, 2, 10, 2).SetValue("い");
-                worksheet.Range(1, 1, 10, 2).Style.Fill.BackgroundColor = XLColor.YaleBlue;
+                worksheet2.Range(1, 2, 10, 2).SetValue("い");
+                worksheet2.Range(1, 1, 10, 2).Style.Fill.BackgroundColor = XLColor.YaleBlue;
+                worksheet2.Cell(6, 6).Style.NumberFormat.Format = "yyyy/m/d";
+                worksheet2.Cell(6, 6).Value = today + " This is Today test 03"; // 今日の日付を入力
                 workbook.SaveAs(@"C:\Users\iwanami\MyDrive\myNote.xlsx");
             }
             catch
